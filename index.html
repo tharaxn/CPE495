@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>พยากรณ์คุณภาพอากาศในมหาวิทยาลัยศรีปทุม</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="weather-container">
+        <aside class="sidebar">
+            <div class="icon sun"></div>
+            <h1 id="temperature">--°</h1>
+            <p id="time">Loading...</p>
+            <p>🌡️ Humidity <span id="humidity">--</span>%</p>
+            <p>💨 Wind Speed <span id="windSpeed">--</span> km/h</p>
+        </aside>
+     
+
+        <main class="content">
+            <h2>Sripatum University Air Quality Forecast</h2>
+            <div class="tabs">
+                <span id="week-tab" class="active">Week</span>
+                <span id="today-tab">Today</span>
+            </div>
+
+            <div class="forecast" id="forecast-container"></div>
+
+            <h3>Highlights</h3>
+            <div class="highlights" id="highlights-container"></div>
+        </main>
+    </div>
+
+    <script src="mainweb.js"></script>
+</body>
+</html>
