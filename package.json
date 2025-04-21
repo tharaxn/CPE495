@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "mongoose": "^8.13.2",
     "react-gauge-chart": "^0.5.1",
     "socket.io-client": "^4.8.1",
     "ws": "^8.18.1"

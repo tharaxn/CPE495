@@ -1,4 +1,3 @@
-// รอ DOMContentLoaded ก่อน
 document.addEventListener("DOMContentLoaded", function () {
     let weatherData = null;
 
@@ -6,7 +5,27 @@ document.addEventListener("DOMContentLoaded", function () {
     const todayTab = document.getElementById("today-tab");
     const forecastContainer = document.getElementById("forecast-container");
 
-    // ฟังก์ชันเพื่อกำหนดสีตามค่า PM2.5
+    // ฟังก์ชันเพื่อแปลงสถานะเป็นอิโมจิ
+    function getWeatherStatusEmoji(status) {
+        switch (status.toLowerCase()) {
+            case 'clear':
+                return '☀️'; // Sunny
+            case 'cloudy':
+                return '☁️'; // Cloudy
+            case 'rainy':
+                return '🌧️'; // Rainy
+            case 'stormy':
+                return '⛈️'; // Stormy
+            case 'snowy':
+                return '❄️'; // Snowy
+            case 'foggy':
+                return '🌫️'; // Foggy
+            default:
+                return '🌥️'; // Default (partly cloudy)
+        }
+    }
+
+    // ฟังก์ชันเพื่อแปลง PM2.5 เป็นสีที่แสดงสถานะ
     function getPollutionStatusColor(pm25) {
         if (pm25 <= 25) return "#75c095";   // เขียว
         if (pm25 <= 50) return "#ffdd63";   // เหลือง
@@ -15,9 +34,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // ฟังก์ชันอัปเดตข้อมูลหลัก
     function updateMainInfo() {
-        document.getElementById("temperature").textContent = `${weatherData.temperature}°`;
-        document.getElementById("humidity").textContent = weatherData.humidity;
-        document.getElementById("windSpeed").textContent = weatherData.windSpeed;
+        document.getElementById("temperature").textContent = `${weatherData.temperature}°C`;
+        document.getElementById("humidity").textContent = `${weatherData.humidity}`;
+        document.getElementById("windSpeed").textContent = `${weatherData.windSpeed}`;
     }
 
     // ฟังก์ชันแสดงข้อมูลพยากรณ์
@@ -30,8 +49,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const day = weatherData.forecast[dayIndex % 7];
             const div = document.createElement("div");
             div.classList.add("forecast-card");
+            const statusEmoji = getWeatherStatusEmoji(day.status);
             const statusColor = getPollutionStatusColor(day.highlights["PM2.5"]);
-            div.innerHTML = `<p>${day.day}</p><div style="font-size: 40px;">${day.status}</div><p>${day.temp}°</p>
+            div.innerHTML = `<p>${day.day}</p><div style="font-size: 40px;">${statusEmoji}</div><p>${day.temp}°</p>
                              <div class="pollution-status" style="background-color: ${statusColor}; width: 10px; height: 10px; border-radius: 50%;"></div>`;
             forecastContainer.appendChild(div);
             updateHighlights(day.highlights);
@@ -39,8 +59,9 @@ document.addEventListener("DOMContentLoaded", function () {
             weatherData.forecast.forEach((day, index) => {
                 const div = document.createElement("div");
                 div.classList.add("forecast-card");
+                const statusEmoji = getWeatherStatusEmoji(day.status);
                 const statusColor = getPollutionStatusColor(day.highlights["PM2.5"]);
-                div.innerHTML = `<p>${day.day}</p><div style="font-size: 30px;">${day.status}</div><p>${day.temp}°</p>
+                div.innerHTML = `<p>${day.day}</p><div style="font-size: 30px;">${statusEmoji}</div><p>${day.temp}°</p>
                                  <div class="pollution-status" style="background-color: ${statusColor}; width: 10px; height: 10px; border-radius: 50%;"></div>`;
 
                 div.addEventListener("click", function () {

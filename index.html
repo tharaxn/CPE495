@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>พยากรณ์คุณภาพอากาศในมหาวิทยาลัยศรีปทุม</title>
     <link rel="stylesheet" href="style.css">
+    
+    <!-- เพิ่มการโหลด Socket.IO Client Library -->
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 </head>
 
 <body>
@@ -13,11 +16,10 @@
             <div class="icon sun"></div>
             <h1 id="temperature">--°</h1>
             <p id="time">Loading...</p>
-            <p>🌡️ Humidity <span id="humidity">--</span>%</p>
+            <p>💧 Humidity <span id="humidity">--</span>%</p>
             <p>💨 Wind Speed <span id="windSpeed">--</span> km/h</p>
         </aside>
      
-
         <main class="content">
             <h2>Sripatum University Air Quality Forecast</h2>
             <div class="tabs">
@@ -32,6 +34,7 @@
         </main>
     </div>
 
+    <!-- เชื่อมต่อกับไฟล์ JavaScript ของคุณ -->
     <script src="mainweb.js"></script>
 </body>
 </html>
