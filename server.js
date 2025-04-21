@@ -1,4 +1,4 @@
-const socket = new WebSocket("ws://localhost:5084/"); 
+const socket = new WebSocket("ws://localhost:5084/");
 
 socket.onmessage = function (event) {
     const data = JSON.parse(event.data);
