@@ -1,3 +1,4 @@
+// รอ DOMContentLoaded ก่อน
 document.addEventListener("DOMContentLoaded", function () {
     let weatherData = null;
 
@@ -5,18 +6,21 @@ document.addEventListener("DOMContentLoaded", function () {
     const todayTab = document.getElementById("today-tab");
     const forecastContainer = document.getElementById("forecast-container");
 
+    // ฟังก์ชันเพื่อกำหนดสีตามค่า PM2.5
     function getPollutionStatusColor(pm25) {
         if (pm25 <= 25) return "#75c095";   // เขียว
         if (pm25 <= 50) return "#ffdd63";   // เหลือง
         return "#ff2d2b";                   // แดง
     }
 
+    // ฟังก์ชันอัปเดตข้อมูลหลัก
     function updateMainInfo() {
         document.getElementById("temperature").textContent = `${weatherData.temperature}°`;
         document.getElementById("humidity").textContent = weatherData.humidity;
         document.getElementById("windSpeed").textContent = weatherData.windSpeed;
     }
 
+    // ฟังก์ชันแสดงข้อมูลพยากรณ์
     function renderForecast(dayIndex = null) {
         if (!weatherData || !weatherData.forecast) return;
 
@@ -38,17 +42,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 const statusColor = getPollutionStatusColor(day.highlights["PM2.5"]);
                 div.innerHTML = `<p>${day.day}</p><div style="font-size: 30px;">${day.status}</div><p>${day.temp}°</p>
                                  <div class="pollution-status" style="background-color: ${statusColor}; width: 10px; height: 10px; border-radius: 50%;"></div>`;
-                
+
                 div.addEventListener("click", function () {
                     updateHighlights(weatherData.forecast[index].highlights);
                 });
-                
+
                 forecastContainer.appendChild(div);
             });
             updateHighlights(weatherData.forecast[2].highlights);
         }
     }
 
+    // ฟังก์ชันอัปเดตข้อมูล Highlights
     function updateHighlights(highlights) {
         const highlightsContainer = document.getElementById("highlights-container");
         highlightsContainer.innerHTML = "";
@@ -61,6 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // ฟังก์ชันอัปเดตเวลา
     function updateTime() {
         const now = new Date();
         const weekday = now.toLocaleString("en-GB", { weekday: "long" });
@@ -71,6 +77,17 @@ document.addEventListener("DOMContentLoaded", function () {
     setInterval(updateTime, 1000);
     updateTime();
 
+    // เชื่อมต่อกับ WebSocket
+    const socket = io("http://localhost:5084");
+
+    // เมื่อได้รับข้อมูลจาก server
+    socket.on("weather", function (data) {
+        weatherData = data;
+        updateMainInfo();
+        renderForecast();
+    });
+
+    // การควบคุมการเปลี่ยนแท็บ
     weekTab.addEventListener("click", function () {
         if (!weatherData) return;
         weekTab.classList.add("active");
@@ -84,10 +101,4 @@ document.addEventListener("DOMContentLoaded", function () {
         weekTab.classList.remove("active");
         renderForecast(new Date().getDay());
     });
-
-    socket.onmessage = function (event) {
-        weatherData = JSON.parse(event.data);
-        updateMainInfo();
-        renderForecast();
-    };
 });

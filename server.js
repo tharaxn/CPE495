@@ -1,22 +1,45 @@
-const socket = new WebSocket("ws://localhost:5084/");
+const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
+const cors = require('cors');
 
-socket.onmessage = function (event) {
-    const data = JSON.parse(event.data);
+const app = express();
+app.use(cors());
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: "*",
+    }
+});
 
-    // อัปเดตอุณหภูมิ, ความชื้น, ความเร็วลม
-    document.getElementById('temperature').innerText = `${data.TempC}°`;
-    document.getElementById('humidity').innerText = data.Hum;
-    document.getElementById('windSpeed').innerText = data.Windspeed;
-    
-    document.getElementById('pm25').innerText = `${data.pm2_5} µg/m³`;
-    document.getElementById('pm10').innerText = `${data.pm10} µg/m³`;
-    document.getElementById('ozone').innerText = `${data.o3} µg/m³`;
-    document.getElementById('co2').innerText = `${data.co} µg/m³`;
-    document.getElementById('no2').innerText = `${data.no2} µg/m³`;
-    document.getElementById('so2').innerText = `${data.so2} µg/m³`;
+const PORT = 5084;
 
-};
+io.on('connection', (socket) => {
+    console.log('Client connected:', socket.id);
 
-socket.onerror = function (error) {
-    console.error("WebSocket Error:", error);
-};
+    // ส่งข้อมูลจำลองทุก 5 วินาที
+    setInterval(() => {
+        const weatherData = {
+            temperature: Math.floor(Math.random() * 35) + 20,
+            humidity: Math.floor(Math.random() * 50) + 40,
+            windSpeed: (Math.random() * 5).toFixed(2),
+            forecast: Array.from({ length: 7 }).map((_, i) => ({
+                day: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][i],
+                status: ['Sunny', 'Rainy', 'Cloudy'][Math.floor(Math.random() * 3)],
+                temp: Math.floor(Math.random() * 10) + 25,
+                highlights: {
+                    "PM2.5": Math.floor(Math.random() * 80),
+                    "PM10": Math.floor(Math.random() * 100),
+                    "CO": (Math.random() * 2).toFixed(2),
+                    "NO2": (Math.random() * 50).toFixed(2)
+                }
+            }))
+        };
+
+        socket.emit('weather', weatherData);
+    }, 5000);
+});
+
+server.listen(PORT, () => {
+    console.log(`✅ Server running at http://localhost:${PORT}`);
+});
